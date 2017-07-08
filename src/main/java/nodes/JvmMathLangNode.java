@@ -6,10 +6,10 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import jvmmathlang.truffle.JvmMathLangTypes;
+import jvmmathlang.truffle.JvmMathLangTypesGen;
 
 @TypeSystemReference(JvmMathLangTypes.class)
 @NodeInfo(language = "JVMMATHLANG", description = "")
-// @Instrumentable(factory = JvmMathLangNodeWrapper.class)
 public abstract class JvmMathLangNode extends Node {
 
     public abstract Object executeGeneric(VirtualFrame frame);

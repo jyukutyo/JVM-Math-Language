@@ -9,14 +9,10 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 import grammer.MathBaseListener;
 import grammer.MathLexer;
 import grammer.MathParser;
-import nodes.AddNodeGen;
 import nodes.AsyncJvmMathLangNode;
-import nodes.DivNodeGen;
 import nodes.JvmMathLangNode;
 import nodes.JvmMathLangRootNode;
-import nodes.MulNodeGen;
 import nodes.ParenJvmMathLangNode;
-import nodes.SubNodeGen;
 import nodes.literal.BigDecimalNode;
 import nodes.literal.LongNode;
 
@@ -27,7 +23,7 @@ public class MathParseTreeListener extends MathBaseListener {
 
     private JvmMathLangNode node;
 
-    private LinkedList<JvmMathLangNode> nodes = new LinkedList<>();
+    private LinkedList<JvmMathLangNode> mathLangNodes = new LinkedList<>();
 
     public JvmMathLangNode getExpression() {
         return node;
@@ -35,54 +31,54 @@ public class MathParseTreeListener extends MathBaseListener {
 
     @Override
     public void exitProg(MathParser.ProgContext ctx) {
-        node = nodes.pop();
+        node = mathLangNodes.pop();
     }
 
     @Override
     public void exitNumberExpr(MathParser.NumberExprContext ctx) {
         String text = ctx.value.getText();
         try {
-            nodes.push(new LongNode(Long.parseLong(text)));
+            mathLangNodes.push(new LongNode(Long.parseLong(text)));
         } catch(NumberFormatException e) {
-            nodes.push(new BigDecimalNode(new BigDecimal(text)));
+            mathLangNodes.push(new BigDecimalNode(new BigDecimal(text)));
         }
     }
 
     @Override
     public void exitInfixExpr(MathParser.InfixExprContext ctx) {
-        JvmMathLangNode right = nodes.pop();
-        JvmMathLangNode left = nodes.pop();
+        JvmMathLangNode right = mathLangNodes.pop();
+        JvmMathLangNode left = mathLangNodes.pop();
 
         JvmMathLangNode current = null;
         switch (ctx.op.getType()) {
             case MathLexer.OP_ADD:
-                current = AddNodeGen.create(left, right);
+                current = nodes.ops.AddNodeGen.create(left, right);
                 break;
             case MathLexer.OP_DIV:
-                current = DivNodeGen.create(left, right);
+                current = nodes.ops.DivNodeGen.create(left, right);
                 break;
             case MathLexer.OP_MUL:
-                current = MulNodeGen.create(left, right);
+                current = nodes.ops.MulNodeGen.create(left, right);
                 break;
             case MathLexer.OP_SUB:
-                current = SubNodeGen.create(left, right);
+                current = nodes.ops.SubNodeGen.create(left, right);
                 break;
         }
-        nodes.push(current);
+        mathLangNodes.push(current);
     }
 
     @Override
     public void exitParensExpr(MathParser.ParensExprContext ctx) {
-        nodes.push(new ParenJvmMathLangNode(nodes.pop()));
+        mathLangNodes.push(new ParenJvmMathLangNode(mathLangNodes.pop()));
     }
 
     @Override
     public void exitAsyncExpr(MathParser.AsyncExprContext ctx) {
-        nodes.push(new AsyncJvmMathLangNode(nodes.pop()));
+        mathLangNodes.push(new AsyncJvmMathLangNode(mathLangNodes.pop()));
     }
 
-    public Map<String,JvmMathLangRootNode> getFunctions() {
-        functions.put("main", new JvmMathLangRootNode(new JvmMathLang(), new FrameDescriptor(), node, "main"));
+    public Map<String,JvmMathLangRootNode> getFunctions(JvmMathLang jvmMathLang) {
+        functions.put("main", new JvmMathLangRootNode(jvmMathLang, new FrameDescriptor(), node, "main"));
         return functions;
     }
 }

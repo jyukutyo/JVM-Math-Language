@@ -17,6 +17,6 @@ public class BigDecimalNode extends JvmMathLangNode {
 
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        return null;
+        return this.value;
     }
 }

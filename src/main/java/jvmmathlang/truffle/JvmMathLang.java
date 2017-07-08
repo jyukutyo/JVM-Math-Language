@@ -1,5 +1,8 @@
 package jvmmathlang.truffle;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 import com.oracle.truffle.api.CallTarget;
@@ -13,9 +16,11 @@ import grammer.MathLexer;
 import grammer.MathParser;
 import nodes.JvmMathLangRootNode;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CodePointBuffer;
+import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.UnbufferedCharStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.apache.commons.io.IOUtils;
 
 @TruffleLanguage.Registration(name = "JVMMATHLANG", version = "0.0.1", mimeType = JvmMathLang.MIME_TYPE)
 @ProvidedTags({StandardTags.CallTag.class, StandardTags.StatementTag.class, StandardTags.RootTag.class, DebuggerTags.AlwaysHalt.class})
@@ -33,7 +38,7 @@ public class JvmMathLang extends TruffleLanguage<JvmMathLangContext> {
 
     @Override
     protected CallTarget parse(ParsingRequest request) throws Exception {
-        Map<String, JvmMathLangRootNode> functions = JvmMathLang.parseSource(request.getSource());
+        Map<String, JvmMathLangRootNode> functions = parseSource(request.getSource());
 
         JvmMathLangRootNode main = functions.get("main");
 
@@ -41,8 +46,9 @@ public class JvmMathLang extends TruffleLanguage<JvmMathLangContext> {
         return Truffle.getRuntime().createCallTarget(evalMain);
     }
 
-    private static Map<String, JvmMathLangRootNode> parseSource(Source source) {
-        CharStream charStream = new UnbufferedCharStream(source.getInputStream());
+    private Map<String, JvmMathLangRootNode> parseSource(Source source) throws IOException {
+        InputStream inputStream = source.getInputStream();
+        CharStream charStream = CodePointCharStream.fromBuffer(CodePointBuffer.withBytes(ByteBuffer.wrap(IOUtils.toByteArray(inputStream))));
         MathLexer mathLexer = new MathLexer(charStream);
         CommonTokenStream tokenStream = new CommonTokenStream(mathLexer);
         MathParser mathParser = new MathParser(tokenStream);
@@ -53,15 +59,12 @@ public class JvmMathLang extends TruffleLanguage<JvmMathLangContext> {
         MathParseTreeListener listener = new MathParseTreeListener();
         treeWalker.walk(listener, prog);
 
-        return listener.getFunctions();
+        return listener.getFunctions(this);
     }
-
-    // TODO implemente below
 
     protected Object findExportedSymbol(JvmMathLangContext context, String globalName, boolean onlyExplicit) {
         return null;
     }
-
 
     protected boolean isObjectOfLanguage(Object object) {
         return false;

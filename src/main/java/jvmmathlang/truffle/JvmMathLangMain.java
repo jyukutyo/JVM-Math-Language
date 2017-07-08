@@ -18,13 +18,13 @@ public class JvmMathLangMain {
         try(Scanner s = new Scanner(System.in)) {
             String program = null;
             while(true) {
-                System.out.println("> ");
+                System.out.print("> ");
                 program = s.nextLine().trim();
                 if (program.equalsIgnoreCase("q")) {
                     break;
                 }
 
-                Source source = Source.newBuilder(program).mimeType(JvmMathLang.MIME_TYPE).build();
+                Source source = Source.newBuilder(program).name("<stdin>").mimeType(JvmMathLang.MIME_TYPE).build();
                 PolyglotEngine.Value result = engine.eval(source);
 
                 System.out.println(result.get().getClass().getSimpleName() + ": " + result.get());

@@ -15,7 +15,6 @@ import nodes.JvmMathLangFunction;
 import nodes.JvmMathLangNode;
 import nodes.JvmMathLangReadArgumenNode;
 import nodes.JvmMathLangRootNode;
-import nodes.PrintlnBuiltInFactory;
 
 public class JvmMathLangContext {
 
@@ -27,7 +26,7 @@ public class JvmMathLangContext {
 
     public JvmMathLangContext() {
         this.globalFrameDescriptor = new FrameDescriptor();
-        installBuiltIn(PrintlnBuiltInFactory.getInstance());
+//        installBuiltIn(PrintlnBuiltInFactory.getInstance());
 
         this.globalFrame = this.initGlobalFrame();
     }

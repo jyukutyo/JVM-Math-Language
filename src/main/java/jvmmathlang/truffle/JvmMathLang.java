@@ -31,15 +31,13 @@ public class JvmMathLang extends TruffleLanguage<JvmMathLangContext> {
         return context;
     }
 
-    
-    
     @Override
     protected CallTarget parse(ParsingRequest request) throws Exception {
         Map<String, JvmMathLangRootNode> functions = JvmMathLang.parseSource(request.getSource());
 
         JvmMathLangRootNode main = functions.get("main");
 
-        JvmMathLangRootNode evalMain = new JvmMathLangRootNode(this, main.getFrameDescriptor(), nodes, "main");
+        JvmMathLangRootNode evalMain = new JvmMathLangRootNode(this, main.getFrameDescriptor(), main.getBodyNode(), "main");
         return Truffle.getRuntime().createCallTarget(evalMain);
     }
 

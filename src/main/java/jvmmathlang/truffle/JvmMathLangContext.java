@@ -3,6 +3,7 @@ package jvmmathlang.truffle;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.oracle.truffle.api.RootCallTarget;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -13,6 +14,7 @@ import nodes.BuiltinNode;
 import nodes.JvmMathLangFunction;
 import nodes.JvmMathLangNode;
 import nodes.JvmMathLangReadArgumenNode;
+import nodes.JvmMathLangRootNode;
 import nodes.PrintlnBuiltInFactory;
 
 public class JvmMathLangContext {
@@ -41,9 +43,12 @@ public class JvmMathLangContext {
         BuiltinNode builtinBodyNode = factory.createNode(argumentNodes, this);
         String name = lookupNodeInfo(builtinBodyNode.getClass()).shortName();
 
+        JvmMathLangRootNode rootNode = new JvmMathLangRootNode(new JvmMathLang(), this.globalFrameDescriptor, builtinBodyNode, name);
+
+        register(name, rootNode);
     }
 
-    private static NodeInfo lookupNodeInfo(Class<?> aClass) {
+    public static NodeInfo lookupNodeInfo(Class<?> aClass) {
         if (aClass == null) {
             return null;
         }
@@ -52,6 +57,20 @@ public class JvmMathLangContext {
             return info;
         }
         return lookupNodeInfo(aClass.getSuperclass());
+    }
+
+    public void register(Map<String, JvmMathLangRootNode> newFunctions) {
+        for (Map.Entry<String, JvmMathLangRootNode> entry: newFunctions.entrySet()) {
+            register(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private JvmMathLangFunction register(String name, JvmMathLangRootNode rootNode) {
+        System.out.println("Registering function: " + name);
+        RootCallTarget callTarget = Truffle.getRuntime().createCallTarget(rootNode);
+        JvmMathLangFunction function = new JvmMathLangFunction(callTarget);
+        functions.put(name, function);
+        return function;
     }
 
     private MaterializedFrame initGlobalFrame() {

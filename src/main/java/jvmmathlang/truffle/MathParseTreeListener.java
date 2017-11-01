@@ -1,9 +1,7 @@
 package jvmmathlang.truffle;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import grammer.MathBaseListener;
@@ -16,23 +14,14 @@ import nodes.ParenJvmMathLangNode;
 import nodes.literal.BigDecimalNode;
 import nodes.literal.LongNode;
 
-
+/**
+ * Truffle nodes creator.
+ */
 public class MathParseTreeListener extends MathBaseListener {
-
-    private Map<String, JvmMathLangRootNode> functions = new HashMap<>();
 
     private JvmMathLangNode node;
 
     private LinkedList<JvmMathLangNode> mathLangNodes = new LinkedList<>();
-
-    public JvmMathLangNode getExpression() {
-        return node;
-    }
-
-    @Override
-    public void exitProg(MathParser.ProgContext ctx) {
-        node = mathLangNodes.pop();
-    }
 
     @Override
     public void exitNumberExpr(MathParser.NumberExprContext ctx) {
@@ -77,8 +66,12 @@ public class MathParseTreeListener extends MathBaseListener {
         mathLangNodes.push(new AsyncJvmMathLangNode(mathLangNodes.pop()));
     }
 
-    public Map<String,JvmMathLangRootNode> getFunctions(JvmMathLang jvmMathLang) {
-        functions.put("main", new JvmMathLangRootNode(jvmMathLang, new FrameDescriptor(), node, "main"));
-        return functions;
+    @Override
+    public void exitProg(MathParser.ProgContext ctx) {
+        node = mathLangNodes.pop();
+    }
+
+    public JvmMathLangRootNode getRoot(JvmMathLang jvmMathLang) {
+        return new JvmMathLangRootNode(jvmMathLang, new FrameDescriptor(), node, "main");
     }
 }

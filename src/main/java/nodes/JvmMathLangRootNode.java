@@ -6,7 +6,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.RootNode;
 
-@NodeInfo(language = "JVMMATHLANG", description = "")
+@NodeInfo
 public class JvmMathLangRootNode extends RootNode {
 
     /** The function body that is executed, and specialized during execution. */

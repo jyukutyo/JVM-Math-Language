@@ -4,7 +4,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.NodeInfo;
 
+@NodeInfo(shortName = "->")
 public class AsyncJvmMathLangNode extends JvmMathLangNode {
 
     @Child private JvmMathLangNode expression;

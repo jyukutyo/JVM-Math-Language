@@ -8,8 +8,8 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import jvmmathlang.truffle.JvmMathLangTypes;
 import jvmmathlang.truffle.JvmMathLangTypesGen;
 
+@NodeInfo
 @TypeSystemReference(JvmMathLangTypes.class)
-@NodeInfo(language = "JVMMATHLANG", description = "")
 public abstract class JvmMathLangNode extends Node {
 
     public abstract Object executeGeneric(VirtualFrame frame);
@@ -21,9 +21,4 @@ public abstract class JvmMathLangNode extends Node {
     public long executeLong(VirtualFrame frame) throws UnexpectedResultException {
         return JvmMathLangTypesGen.expectLong(executeGeneric(frame));
     }
-
-    public JvmMathLangFunction executeJvmMathLangFunction(VirtualFrame frame) throws UnexpectedResultException {
-        return JvmMathLangTypesGen.expectJvmMathLangFunction(executeGeneric(frame));
-    }
-
 }

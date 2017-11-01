@@ -3,7 +3,9 @@ package jvmmathlang.truffle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.io.IOUtils;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.Truffle;
@@ -20,10 +22,21 @@ import org.antlr.v4.runtime.CodePointBuffer;
 import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.apache.commons.io.IOUtils;
 
-@TruffleLanguage.Registration(name = "JVMMATHLANG", version = "0.0.1", mimeType = JvmMathLang.MIME_TYPE)
-@ProvidedTags({StandardTags.CallTag.class, StandardTags.StatementTag.class, StandardTags.RootTag.class, DebuggerTags.AlwaysHalt.class})
+/**
+ * run code with ANTLR and Truffle.
+ */
+@TruffleLanguage.Registration(
+        name = "JVMMATHLANG",
+        version = "0.0.1",
+        mimeType = JvmMathLang.MIME_TYPE)
+@ProvidedTags(
+        {
+                StandardTags.CallTag.class,
+                StandardTags.StatementTag.class,
+                StandardTags.RootTag.class,
+                DebuggerTags.AlwaysHalt.class
+        })
 public class JvmMathLang extends TruffleLanguage<JvmMathLangContext> {
 
     public static final String MIME_TYPE = "application/x-jvmmathlang";
@@ -38,35 +51,43 @@ public class JvmMathLang extends TruffleLanguage<JvmMathLangContext> {
 
     @Override
     protected CallTarget parse(ParsingRequest request) throws Exception {
-        Map<String, JvmMathLangRootNode> functions = parseSource(request.getSource());
-
-        JvmMathLangRootNode main = functions.get("main");
-
-        JvmMathLangRootNode evalMain = new JvmMathLangRootNode(this, main.getFrameDescriptor(), main.getBodyNode(), "main");
-        return Truffle.getRuntime().createCallTarget(evalMain);
+        JvmMathLangRootNode main = parseSource(request.getSource());
+        return Truffle.getRuntime().createCallTarget(main);
     }
 
-    private Map<String, JvmMathLangRootNode> parseSource(Source source) throws IOException {
+    private JvmMathLangRootNode parseSource(Source source) throws IOException {
+        // get user input
+        //
         InputStream inputStream = source.getInputStream();
-        CharStream charStream = CodePointCharStream.fromBuffer(CodePointBuffer.withBytes(ByteBuffer.wrap(IOUtils.toByteArray(inputStream))));
+        byte[] byteArray = IOUtils.toByteArray(inputStream);
+
+        System.out.println("inputed String: " + new String(byteArray, StandardCharsets.UTF_8));
+
+        // convert user input to ANTLR character stream
+        // java.lang.UnsupportedOperationException causes when use CharBuffer
+        CharStream charStream = CodePointCharStream.fromBuffer(
+                CodePointBuffer.withBytes(
+                        ByteBuffer.wrap(
+                                byteArray)));
+
+        // lexing
         MathLexer mathLexer = new MathLexer(charStream);
         CommonTokenStream tokenStream = new CommonTokenStream(mathLexer);
-        MathParser mathParser = new MathParser(tokenStream);
 
+        // parsing
+        MathParser mathParser = new MathParser(tokenStream);
         MathParser.ProgContext prog = mathParser.prog();
 
+        // creates Truffle nodes from ANTLR parse result
         ParseTreeWalker treeWalker = new ParseTreeWalker();
         MathParseTreeListener listener = new MathParseTreeListener();
         treeWalker.walk(listener, prog);
 
-        return listener.getFunctions(this);
-    }
-
-    protected Object findExportedSymbol(JvmMathLangContext context, String globalName, boolean onlyExplicit) {
-        return null;
+        return listener.getRoot(this);
     }
 
     protected boolean isObjectOfLanguage(Object object) {
+        // return true if this language can deal with such object in "native way"
         return false;
     }
 }

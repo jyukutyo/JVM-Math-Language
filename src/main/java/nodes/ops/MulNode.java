@@ -2,7 +2,6 @@ package nodes.ops;
 
 import java.math.BigDecimal;
 
-import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import nodes.BinaryNode;
@@ -16,13 +15,11 @@ public abstract class MulNode extends BinaryNode {
     }
 
     @Specialization
-    @TruffleBoundary
     protected BigDecimal mul(BigDecimal left, BigDecimal right) {
         return left.multiply(right);
     }
 
     @Specialization
-    @TruffleBoundary
     protected BigDecimal mul(Object left, Object right) {
         BigDecimal l = left instanceof BigDecimal ? (BigDecimal) left : BigDecimal.valueOf((long) left);
         BigDecimal r = right instanceof BigDecimal ? (BigDecimal) right : BigDecimal.valueOf((long) right);

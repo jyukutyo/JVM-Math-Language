@@ -10,9 +10,6 @@ import org.apache.commons.io.IOUtils;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
-import com.oracle.truffle.api.debug.DebuggerTags;
-import com.oracle.truffle.api.instrumentation.ProvidedTags;
-import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.source.Source;
 import grammer.MathLexer;
 import grammer.MathParser;
@@ -30,13 +27,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
         name = "JVMMATHLANG",
         version = "0.0.1",
         mimeType = JvmMathLang.MIME_TYPE)
-@ProvidedTags(
-        {
-                StandardTags.CallTag.class,
-                StandardTags.StatementTag.class,
-                StandardTags.RootTag.class,
-                DebuggerTags.AlwaysHalt.class
-        })
 public class JvmMathLang extends TruffleLanguage<JvmMathLangContext> {
 
     public static final String MIME_TYPE = "application/x-jvmmathlang";

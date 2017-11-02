@@ -25,8 +25,4 @@ public class JvmMathLangRootNode extends RootNode {
     public Object execute(VirtualFrame frame) {
         return bodyNode.executeGeneric(frame);
     }
-
-    public JvmMathLangNode getBodyNode() {
-        return bodyNode;
-    }
 }

@@ -1,0 +1,56 @@
+@startuml
+
+abstract class JvmMathLangNode
+abstract class BinaryNode
+abstract class AddNode
+abstract class SubNode
+abstract class MulNode
+abstract class DivNode
+
+JvmMathLangNode <|-- BinaryNode
+BinaryNode <|-- AddNode
+BinaryNode <|-- SubNode
+BinaryNode <|-- MulNode
+BinaryNode <|-- DivNode
+
+@enduml
+
+@startuml
+
+abstract class com.oracle.truffle.api.nodes.Node
+abstract class JvmMathLangNode
+
+com.oracle.truffle.api.nodes.Node <|-- JvmMathLangNode
+
+@enduml
+
+@startuml
+
+abstract class JvmMathLangNode
+class BigDecimalNode
+class LongNode
+class ParenJvmMathLangNode
+
+JvmMathLangNode <|-- BigDecimalNode
+JvmMathLangNode <|-- LongNode
+JvmMathLangNode <|-- ParenJvmMathLangNode
+
+@enduml
+
+@startuml
+
+abstract class AddNode
+abstract class SubNode
+abstract class MulNode
+abstract class DivNode
+class AddNodeGen
+class SubNodeGen
+class MulNodeGen
+class DivNodeGen
+
+AddNode <|-- AddNodeGen
+SubNode <|-- SubNodeGen
+MulNode <|-- MulNodeGen
+DivNode <|-- DivNodeGen
+
+@enduml

@@ -1,11 +1,12 @@
 package jvmmathlang.truffle;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 import com.oracle.truffle.api.Truffle;
-import com.oracle.truffle.api.source.MissingNameException;
-import com.oracle.truffle.api.source.Source;
-import com.oracle.truffle.api.vm.PolyglotEngine;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.Value;
 
 /**
  * Main class.
@@ -16,11 +17,11 @@ import com.oracle.truffle.api.vm.PolyglotEngine;
  */
 public class JvmMathLangMain {
 
-    public static void main(String[] args) throws MissingNameException {
+    public static void main(String[] args) throws IOException {
         System.out.println("Truffle runtime: " + Truffle.getRuntime().getName());
 
-        PolyglotEngine engine = PolyglotEngine.newBuilder().setIn(System.in).setOut(System.out).build();
-        System.out.println("Language: " + engine.getLanguages());
+        Context context = Context.create("jvmmathlang");
+        context.getEngine().getLanguages().forEach((s, l) -> System.out.println("Language: " + l.getName()));
 
         try (Scanner s = new Scanner(System.in)) {
             while (true) {
@@ -31,17 +32,16 @@ public class JvmMathLangMain {
                     break;
                 }
 
-                Object answer = runCode(engine, program);
+                Object answer = runCode(context, program);
                 System.out.println("answer: " + answer + " (" + answer.getClass().getSimpleName() + ")");
                 System.out.println();
             }
         }
     }
 
-    private static Object runCode(PolyglotEngine engine, String program) {
-        Source source = Source.newBuilder(program).name("MATH").mimeType(JvmMathLang.MIME_TYPE).build();
-        PolyglotEngine.Value result = engine.eval(source);
-
-        return result.get();
+    private static Object runCode(Context context, String program) throws IOException {
+        Source source = Source.newBuilder("jvmmathlang", program, "MATH").build();
+        Value value = context.eval(source);
+        return value.as(Object.class);
     }
 }

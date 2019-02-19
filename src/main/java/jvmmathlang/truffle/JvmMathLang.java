@@ -1,11 +1,7 @@
 package jvmmathlang.truffle;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-
-import org.apache.commons.io.IOUtils;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.Truffle;
@@ -24,19 +20,16 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
  * run code with ANTLR and Truffle.
  */
 @TruffleLanguage.Registration(
-        name = "JVMMATHLANG",
-        version = "0.0.1",
+        id = "jvmmathlang",
+        name = "JVM Math Language",
+        version = "0.0.2",
         mimeType = JvmMathLang.MIME_TYPE)
 public class JvmMathLang extends TruffleLanguage<JvmMathLangContext> {
 
-    public static final String MIME_TYPE = "application/x-jvmmathlang";
+    static final String MIME_TYPE = "application/x-jvmmathlang";
 
     protected JvmMathLangContext createContext(Env env) {
         return new JvmMathLangContext();
-    }
-
-    protected Object getLanguageGlobal(JvmMathLangContext context) {
-        return context;
     }
 
     @Override
@@ -47,18 +40,16 @@ public class JvmMathLang extends TruffleLanguage<JvmMathLangContext> {
 
     private JvmMathLangRootNode parseSource(Source source) throws IOException {
         // get user input
-        //
-        InputStream inputStream = source.getInputStream();
-        byte[] byteArray = IOUtils.toByteArray(inputStream);
+        String input = source.getCharacters().toString();
 
-        System.out.println("inputed String: " + new String(byteArray, StandardCharsets.UTF_8));
+        System.out.println("inputed String: " + input);
 
         // convert user input to ANTLR character stream
         // java.lang.UnsupportedOperationException causes when use CharBuffer
         CharStream charStream = CodePointCharStream.fromBuffer(
                 CodePointBuffer.withBytes(
                         ByteBuffer.wrap(
-                                byteArray)));
+                                input.getBytes())));
 
         // lexing
         MathLexer mathLexer = new MathLexer(charStream);

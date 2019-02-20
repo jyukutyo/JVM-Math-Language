@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import nodes.BinaryNode;
+import nodes.literal.BigDecimalTruffleObject;
 
 @NodeInfo(shortName = "/")
 public abstract class DivNode extends BinaryNode {
@@ -26,9 +27,9 @@ public abstract class DivNode extends BinaryNode {
     }
 
     @Specialization
-    protected BigDecimal div(Object left, Object right) {
-        BigDecimal l = left instanceof BigDecimal ? (BigDecimal) left : BigDecimal.valueOf((long) left);
-        BigDecimal r = right instanceof BigDecimal ? (BigDecimal) right : BigDecimal.valueOf((long) right);
-        return l.divide(r);
+    protected BigDecimalTruffleObject div(Object left, Object right) {
+        BigDecimal l = left instanceof BigDecimalTruffleObject ? ((BigDecimalTruffleObject) left).getValue() : BigDecimal.valueOf((long) left);
+        BigDecimal r = right instanceof BigDecimalTruffleObject ? ((BigDecimalTruffleObject) right).getValue() : BigDecimal.valueOf((long) right);
+        return new BigDecimalTruffleObject(l.divide(r));
     }
 }

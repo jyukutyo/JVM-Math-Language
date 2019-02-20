@@ -22,11 +22,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 @TruffleLanguage.Registration(
         id = "jvmmathlang",
         name = "JVM Math Language",
-        version = "0.0.2",
-        mimeType = JvmMathLang.MIME_TYPE)
+        version = "0.0.2")
 public class JvmMathLang extends TruffleLanguage<JvmMathLangContext> {
-
-    static final String MIME_TYPE = "application/x-jvmmathlang";
 
     protected JvmMathLangContext createContext(Env env) {
         return new JvmMathLangContext();

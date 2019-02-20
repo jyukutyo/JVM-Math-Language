@@ -33,7 +33,7 @@ public class JvmMathLangMain {
                 }
 
                 Object answer = runCode(context, program);
-                System.out.println("answer: " + answer + " (" + answer.getClass().getSimpleName() + ")");
+                System.out.println("answer: " + answer);
                 System.out.println();
             }
         }
@@ -42,6 +42,6 @@ public class JvmMathLangMain {
     private static Object runCode(Context context, String program) throws IOException {
         Source source = Source.newBuilder("jvmmathlang", program, "MATH").build();
         Value value = context.eval(source);
-        return value.as(Object.class);
+        return value;
     }
 }

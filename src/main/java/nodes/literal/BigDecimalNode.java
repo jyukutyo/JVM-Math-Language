@@ -17,6 +17,7 @@ public class BigDecimalNode extends JvmMathLangNode {
 
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        return this.value;
+        return new BigDecimalTruffleObject(this.value);
     }
+
 }

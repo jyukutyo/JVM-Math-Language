@@ -22,7 +22,7 @@ public class ParenJvmMathLangNode extends JvmMathLangNode {
         try {
             return this.expression.executeLong(frame);
         } catch (UnexpectedResultException e) {
-            throw new ArithmeticException();
+            return this.expression.executeGeneric(frame);
         }
     }
 }

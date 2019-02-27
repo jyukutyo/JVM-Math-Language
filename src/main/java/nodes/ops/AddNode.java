@@ -20,9 +20,9 @@ public abstract class AddNode extends BinaryNode {
 
     @Specialization
     @TruffleBoundary
-    protected BigDecimal add(BigDecimal left, BigDecimal right) {
+    protected BigDecimalTruffleObject add(BigDecimalTruffleObject left, BigDecimalTruffleObject right) {
         System.out.println("add(BigDecimal, BigDecimal)");
-        return left.add(right);
+        return new BigDecimalTruffleObject(left.getValue().add(right.getValue()));
     }
 
     @Specialization

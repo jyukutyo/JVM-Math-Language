@@ -16,8 +16,8 @@ public abstract class SubNode extends BinaryNode {
     }
 
     @Specialization
-    protected BigDecimal sub(BigDecimal left, BigDecimal right) {
-        return left.subtract(right);
+    protected BigDecimalTruffleObject sub(BigDecimalTruffleObject left, BigDecimalTruffleObject right) {
+        return new BigDecimalTruffleObject(left.getValue().subtract(right.getValue()));
     }
 
     @Specialization

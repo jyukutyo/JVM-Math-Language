@@ -16,8 +16,8 @@ public abstract class MulNode extends BinaryNode {
     }
 
     @Specialization
-    protected BigDecimal mul(BigDecimal left, BigDecimal right) {
-        return left.multiply(right);
+    protected BigDecimalTruffleObject mul(BigDecimalTruffleObject left, BigDecimalTruffleObject right) {
+        return new BigDecimalTruffleObject(left.getValue().multiply(right.getValue()));
     }
 
     @Specialization

@@ -22,8 +22,8 @@ public abstract class DivNode extends BinaryNode {
     }
 
     @Specialization
-    protected BigDecimal div(BigDecimal left, BigDecimal right) {
-        return left.divide(right);
+    protected BigDecimalTruffleObject div(BigDecimalTruffleObject left, BigDecimalTruffleObject right) {
+        return new BigDecimalTruffleObject(left.getValue().divide(right.getValue()));
     }
 
     @Specialization

@@ -4,7 +4,7 @@
 
   <groupId>com.jyukutyo</groupId>
   <artifactId>jvmmathlang</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <packaging>jar</packaging>
 
   <name>jvmmathlang</name>
@@ -12,9 +12,84 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <java.version>11</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <bundle.symbolic.name>jvmmathlang</bundle.symbolic.name>
+    <target.graalvm.version>20.3.0</target.graalvm.version>
   </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <finalName>${project.artifactId}</finalName>
+        </configuration>
+      </plugin>      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/distribution.xml</descriptor>
+          </descriptors>          
+          <archive>
+            <manifestEntries>
+              <Bundle-Name>JVM Math Lang</Bundle-Name>
+              <Bundle-Symbolic-Name>${bundle.symbolic.name}</Bundle-Symbolic-Name>
+              <Bundle-Version>${project.version}</Bundle-Version>
+              <Bundle-RequireCapability>org.graalvm; filter:="(java_version=11)"</Bundle-RequireCapability>
+              <x-GraalVM-Polyglot-Part>True</x-GraalVM-Polyglot-Part>
+            </manifestEntries>
+          </archive>          
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>        
+      </plugin>
+      <plugin>
+        <groupId>net.nicoulaj.maven.plugins</groupId>
+        <artifactId>checksum-maven-plugin</artifactId>
+        <version>1.9</version>
+        <configuration>
+          <algorithms>
+            <algorithm>SHA-256</algorithm>
+          </algorithms>
+          <fileSets>
+            <fileSet>
+              <directory>${project.build.directory}</directory>
+              <includes>
+                <include>${project.artifactId}-${project.version}-component.jar</include>
+              </includes>
+            </fileSet>
+          </fileSets>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>files</goal>
+            </goals>
+          </execution>
+        </executions>        
+      </plugin>      
+    </plugins>
+  </build>
 
   <dependencies>
     <dependency>
@@ -25,12 +100,12 @@
     <dependency>
         <groupId>org.graalvm.truffle</groupId>
         <artifactId>truffle-api</artifactId>
-        <version>1.0.0-rc12</version>
+        <version>${target.graalvm.version}</version>
     </dependency>
     <dependency>
         <groupId>org.graalvm.truffle</groupId>
         <artifactId>truffle-dsl-processor</artifactId>
-        <version>1.0.0-rc12</version>
+        <version>${target.graalvm.version}</version>
         <scope>provided</scope>
     </dependency>
   </dependencies>

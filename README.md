@@ -2,7 +2,9 @@
 
 ## What is this?
 
-An AST interpreter with Truffle. This program can execute four arithmetic operations. You can use numbers, +, -, *, /, "()", and "->" for running in another thread.
+This is a language implementation of simple arithmetic operations for GraalVM. You can install this language into your GraalVM.
+
+Of course this is implemented with Truffle API. This program can execute four arithmetic operations. You can use numbers, +, -, *, /, "()". Additionally "->" for running in another thread.
 
 * Lexer, Parser: ANTLR 4.7
 * AST Interpreter: Truffle in GraalVM 20.3.0
@@ -12,14 +14,19 @@ An AST interpreter with Truffle. This program can execute four arithmetic operat
 ### Install
 
 Just run `mvn package` & `gu install -L target/jvmmathlang-0.1.0-component.jar`.
-With `gu list`, you can see JVM Math Lang component.
+With `gu list`, you can see the JVM Math Lang component.
+
+```
+$ gu list
+
+```
 
 ### Run Sample Code
 
 ```
-cd example
-javac Sample.java
-java Sample
+$ cd example
+$ javac Sample.java
+$ java Sample
 inputed String: (1+2)*3
 add(long, long)
 9

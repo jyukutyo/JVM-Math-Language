@@ -13,13 +13,23 @@ Of course this is implemented with Truffle API. This program can execute four ar
 
 ### Install
 
+#### Local Install
+
 Just run `mvn package` & `gu install -L target/jvmmathlang-0.1.0-component.jar`.
-With `gu list`, you can see the JVM Math Lang component.
+With `gu list`, you can see the JVM Math Lang component as follows.
 
 ```
 $ gu list
-
+ComponentId              Version             Component name      Origin
+--------------------------------------------------------------------------------
+js                       20.3.0              Graal.js
+jvmmathlang              1.0.0               JVM Math Lang       github.com
+graalvm                  20.3.0              GraalVM Core
 ```
+
+#### From Component Catalog
+
+I also provide the component catalog for this language. Just run `gu install -C https://raw.githubusercontent.com/jyukutyo/JVM-Math-Language/master/jvmmathlang-catalog-java11.properties jvmmathlang`. Currently it is only for GraalVM 20.3.0 and 20.2.0.
 
 ### Run Sample Code
 
